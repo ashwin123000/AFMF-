@@ -1,0 +1,382 @@
+"""
+BENCHMARKING QUICK REFERENCE CARD
+==================================
+Keep this handy while benchmarking!
+"""
+
+# ============================================================================
+# QUICK START (COPY & PASTE)
+# ============================================================================
+
+# === OPTION 1: Minimal Setup ===
+from benchmark_baseline import BenchmarkConfig, BaselineBenchmark
+
+config = BenchmarkConfig()
+benchmark = BaselineBenchmark(config)
+results = benchmark.run_benchmark()
+benchmark.save_results()
+benchmark.print_summary()
+
+
+# === OPTION 2: Custom Configuration ===
+from benchmark_baseline import BenchmarkConfig, BaselineBenchmark
+
+config = BenchmarkConfig()
+config.MODEL_NAME = "DLinear"
+config.DATASET_NAME = "SMD"
+config.BATCH_SIZE = 64
+config.ANOMALY_THRESHOLD = 0.5
+
+benchmark = BaselineBenchmark(config)
+results = benchmark.run_benchmark()
+benchmark.save_results()
+
+
+# === OPTION 3: Using Configuration Template ===
+from benchmark_baseline import BaselineBenchmark
+from config_templates import ThoroughBenchmarkConfig
+
+config = ThoroughBenchmarkConfig()
+benchmark = BaselineBenchmark(config)
+results = benchmark.run_benchmark()
+benchmark.save_results()
+
+
+# ============================================================================
+# KEY CONFIGURATION PARAMETERS
+# ============================================================================
+
+Parameter              Type     Default    Description
+─────────────────────────────────────────────────────────────
+DATASET_NAME          str      "SMD"      Which dataset to use
+MODEL_NAME            str      "MTAD_GAT" Which model to benchmark
+DEVICE                str      "cuda"     "cuda" or "cpu"
+BATCH_SIZE            int      32         Samples per batch
+NUM_ITERATIONS        int      10         Latency measurements
+WARMUP_ITERATIONS     int      2          Warm-up runs
+ANOMALY_THRESHOLD     float    0.5        Binary classification threshold
+OUTPUT_DIR            str      "./bench.." Results directory
+
+
+# ============================================================================
+# RESULTS STRUCTURE
+# ============================================================================
+
+results = {
+    "metadata": {
+        "model_name": str,
+        "dataset_name": str,
+        "device": str,
+        "timestamp": str
+    },
+    "performance_metrics": {
+        "precision": float,          # 0-1, higher better
+        "recall": float,             # 0-1, higher better
+        "f1_score": float,           # 0-1, higher better
+        "accuracy": float,           # 0-1, higher better
+        "auc_roc": float            # 0-1, higher better
+    },
+    "inference": {
+        "total_inference_time_seconds": float,
+        "latency_per_batch_ms": {
+            "mean_latency_ms": float,
+            "median_latency_ms": float,
+            "std_latency_ms": float,
+            "min_latency_ms": float,
+            "max_latency_ms": float
+        }
+    },
+    "memory": {
+        "ram_before_mb": float,
+        "ram_after_mb": float,
+        "ram_delta_mb": float,
+        "vram_before_mb": float,
+        "vram_after_mb": float,
+        "vram_delta_mb": float
+    },
+    "model_info": {
+        "total_parameters": int,
+        "trainable_parameters": int,
+        "load_time_seconds": float
+    },
+    "data_loading": {
+        "num_samples": int,
+        "num_anomalies": int,
+        "load_time_seconds": float
+    }
+}
+
+
+# ============================================================================
+# EXTRACT SPECIFIC METRICS
+# ============================================================================
+
+# Performance Metrics
+precision = results['performance_metrics']['precision']
+recall = results['performance_metrics']['recall']
+f1_score = results['performance_metrics']['f1_score']
+accuracy = results['performance_metrics']['accuracy']
+auc_roc = results['performance_metrics']['auc_roc']
+
+# Latency (in milliseconds per batch)
+mean_latency = results['inference']['latency_per_batch_ms']['mean_latency_ms']
+median_latency = results['inference']['latency_per_batch_ms']['median_latency_ms']
+std_latency = results['inference']['latency_per_batch_ms']['std_latency_ms']
+
+# Memory (in MB)
+ram_delta = results['memory']['ram_delta_mb']
+vram_delta = results['memory']['vram_delta_mb']
+
+# Model Info
+total_params = results['model_info']['total_parameters']
+trainable_params = results['model_info']['trainable_parameters']
+
+
+# ============================================================================
+# COMMON CUSTOMIZATIONS
+# ============================================================================
+
+# Change Model
+config.MODEL_NAME = "Autoformer"  # or DLinear, Informer, etc.
+
+# Change Dataset
+config.DATASET_NAME = "MSL"  # or SWaT, SMAP, PSM, etc.
+
+# Use CPU Instead of GPU
+config.DEVICE = "cpu"
+
+# Increase Batch Size for Speed
+config.BATCH_SIZE = 128
+
+# Test Different Anomaly Threshold
+config.ANOMALY_THRESHOLD = 0.3  # More sensitive
+config.ANOMALY_THRESHOLD = 0.7  # More conservative
+
+# More Stable Measurements
+config.NUM_ITERATIONS = 50
+config.WARMUP_ITERATIONS = 5
+
+# Save to Custom Directory
+config.OUTPUT_DIR = "./my_results/"
+
+
+# ============================================================================
+# METRICS INTERPRETATION
+# ============================================================================
+
+Performance Metrics (0-1 scale, higher = better):
+  ├─ Precision: False alarms / total positives
+  ├─ Recall: Missed anomalies / total anomalies
+  ├─ F1-Score: Harmonic mean of precision & recall
+  ├─ Accuracy: Correct predictions / total
+  └─ AUC-ROC: Performance across all thresholds
+
+Latency (milliseconds):
+  ├─ Mean: Average per-batch inference time
+  ├─ Median: Middle value (more robust)
+  ├─ Std: Variability (lower = more stable)
+  └─ Min/Max: Range of latencies
+
+Memory (megabytes):
+  ├─ RAM: System memory increase
+  ├─ VRAM: GPU memory increase
+  └─ Delta: Change from before to after
+
+
+# ============================================================================
+# GOOD BASELINE VALUES (FOR REFERENCE)
+# ============================================================================
+
+Strong Baseline:
+  F1-Score: 0.85+
+  Precision: 0.90+
+  Recall: 0.80+
+  Latency: < 10ms per batch
+  Memory: < 2000 MB GPU delta
+
+Acceptable Baseline:
+  F1-Score: 0.75-0.85
+  Precision: 0.80-0.90
+  Recall: 0.70-0.80
+  Latency: 10-50ms per batch
+  Memory: 2000-4000 MB GPU delta
+
+Needs Improvement:
+  F1-Score: < 0.75
+  Precision: < 0.80
+  Recall: < 0.70
+  Latency: > 50ms per batch
+  Memory: > 4000 MB GPU delta
+
+
+# ============================================================================
+# COMMON ISSUES & QUICK FIXES
+# ============================================================================
+
+ISSUE: "CUDA out of memory"
+FIX: config.BATCH_SIZE = 16  # Reduce batch size
+
+ISSUE: "Dataset not found"
+FIX: Check config.DATA_PATH points to correct location
+
+ISSUE: "All metrics are zero"
+FIX: Check anomaly_threshold and label distribution
+
+ISSUE: "Model loading fails"
+FIX: Verify model import and checkpoint compatibility
+
+ISSUE: "Latency very unstable"
+FIX: Increase NUM_ITERATIONS and WARMUP_ITERATIONS
+
+ISSUE: "Results directory not created"
+FIX: Ensure OUTPUT_DIR directory exists or set writable path
+
+
+# ============================================================================
+# FILES & LOCATIONS
+# ============================================================================
+
+Main Script:
+  benchmark_baseline.py
+
+Examples:
+  example_benchmark.py
+
+Documentation:
+  BENCHMARKING_GUIDE.md
+  BENCHMARKING_README.txt
+  quick_reference.txt (this file)
+
+Configuration Templates:
+  config_templates.py
+
+Results Output:
+  benchmark_results/
+    ├─ benchmark_MODEL_TIMESTAMP.csv
+    └─ benchmark_MODEL_TIMESTAMP.json
+
+
+# ============================================================================
+# USEFUL COMMANDS
+# ============================================================================
+
+# Run basic benchmark
+python example_benchmark.py
+
+# Run with custom config
+python -c "
+from benchmark_baseline import BaselineBenchmark
+from config_templates import ThoroughBenchmarkConfig
+b = BaselineBenchmark(ThoroughBenchmarkConfig())
+b.run_benchmark()
+b.save_results()
+"
+
+# List available models
+python -c "
+models = ['MTAD_GAT', 'DLinear', 'Autoformer', 'DeepAR', 
+          'GTA', 'Informer', 'LSTNet', 'MA', 'GDN', 'RTNet']
+print('Available models:', models)
+"
+
+# List available datasets
+python -c "
+datasets = ['SMD', 'MSL', 'SMAP', 'PSM', 'SWaT', 
+            'WADI', 'MBA', 'UCR', 'NAB', 'MSDS']
+print('Available datasets:', datasets)
+"
+
+# Check CUDA availability
+python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
+
+
+# ============================================================================
+# COMPARING MODELS
+# ============================================================================
+
+from benchmark_baseline import BenchmarkConfig, BaselineBenchmark
+
+models = ["MTAD_GAT", "DLinear", "Autoformer"]
+results = {}
+
+for model_name in models:
+    config = BenchmarkConfig()
+    config.MODEL_NAME = model_name
+    benchmark = BaselineBenchmark(config)
+    results[model_name] = benchmark.run_benchmark()
+    benchmark.save_results()
+
+# Print comparison
+print(f"{'Model':<20} {'F1':<10} {'Latency':<12} {'RAM':<10}")
+for model, res in results.items():
+    f1 = res['performance_metrics']['f1_score']
+    lat = res['inference']['latency_per_batch_ms']['mean_latency_ms']
+    ram = res['memory']['ram_delta_mb']
+    print(f"{model:<20} {f1:<10.4f} {lat:<12.4f} {ram:<10.2f}")
+
+
+# ============================================================================
+# EXPORT & VISUALIZATION
+# ============================================================================
+
+import pandas as pd
+import json
+
+# Load results
+with open('benchmark_results/benchmark_MTAD_GAT_20240115_103045.json') as f:
+    results = json.load(f)
+
+# Convert to DataFrame
+df = pd.DataFrame([results['performance_metrics']])
+print(df)
+
+# Save to CSV manually
+import csv
+with open('my_results.csv', 'w') as f:
+    writer = csv.DictWriter(f, fieldnames=results.keys())
+    writer.writeheader()
+    writer.writerow(results)
+
+
+# ============================================================================
+# TROUBLESHOOTING CHECKLISTS
+# ============================================================================
+
+Setup Checklist:
+  ☐ Python environment configured
+  ☐ Dependencies installed: pip install -r requirements_benchmark.txt
+  ☐ Project structure intact
+  ☐ Datasets available (or use synthetic)
+  ☐ Models importable
+
+Before Running:
+  ☐ Check DATASET_NAME is valid
+  ☐ Check MODEL_NAME is valid
+  ☐ Verify DEVICE (cuda/cpu)
+  ☐ Check BATCH_SIZE reasonable
+  ☐ Ensure OUTPUT_DIR writable
+
+After Running:
+  ☐ Check results were saved to OUTPUT_DIR
+  ☐ Verify JSON/CSV files created
+  ☐ Review performance_metrics
+  ☐ Compare with expectations
+  ☐ Note any anomalies or issues
+
+
+# ============================================================================
+# NEXT STEPS
+# ============================================================================
+
+1. Install dependencies: pip install -r requirements_benchmark.txt
+2. Run example: python example_benchmark.py
+3. Review results in: ./benchmark_results/
+4. Customize config for your models/datasets
+5. Run full model comparison
+6. Document baseline metrics
+7. Use for future optimization comparisons
+
+For detailed help, see: BENCHMARKING_GUIDE.md
+"""
+
+print(__doc__)

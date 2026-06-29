@@ -1,0 +1,53 @@
+{
+  "metadata": {
+    "timestamp": "2026-06-29T14:34:34.841531",
+    "model_name": "MA",
+    "dataset_name": "SWaT",
+    "device": "cpu",
+    "batch_size": 128,
+    "benchmark_variant": "AFMF-partial",
+    "afmf_components": {
+      "LIN": true,
+      "LF": true,
+      "PAM": false
+    }
+  },
+  "data_loading": {
+    "load_time_seconds": 9.363682508468628,
+    "num_samples": 449200,
+    "input_shape": "720x40",
+    "num_anomalies": 54621
+  },
+  "model_info": {
+    "load_time_seconds": 0.008279085159301758,
+    "total_parameters": 0,
+    "trainable_parameters": 0
+  },
+  "inference": {
+    "total_inference_time_seconds": 356.8831489086151,
+    "latency_per_batch_ms": {
+      "mean_latency_ms": 62.719539972022176,
+      "median_latency_ms": 62.35735001973808,
+      "std_latency_ms": 3.0625026511479394,
+      "min_latency_ms": 58.645399985834956,
+      "max_latency_ms": 68.20429977960885
+    },
+    "score_threshold": 28.46434783935547
+  },
+  "memory": {
+    "ram_before_mb": 587.21875,
+    "ram_after_mb": 638.25390625,
+    "ram_delta_mb": 51.03515625,
+    "vram_before_mb": 0.0,
+    "vram_after_mb": 0.0,
+    "vram_delta_mb": 0.0
+  },
+  "performance_metrics": {
+    "precision": 0.1246660730186999,
+    "recall": 0.005126233499935922,
+    "f1_score": 0.00984753899449593,
+    "accuracy": 0.8746504897595726,
+    "auc_roc": 0.33321572186950504
+  },
+  "anomaly_threshold_ratio": 0.005
+}

@@ -1,0 +1,492 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║  BASELINE MODEL BENCHMARKING SUITE - COMPLETE INSTALLATION SUMMARY         ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+PROJECT PHASE: Phase 2 - Benchmarking Baseline Models
+CREATED: 2024
+STATUS: Ready to Use
+
+
+═════════════════════════════════════════════════════════════════════════════
+ FILES CREATED
+═════════════════════════════════════════════════════════════════════════════
+
+✓ benchmark_baseline.py (860+ lines)
+  └─ Main benchmarking engine with all utilities
+  └─ Includes: BenchmarkConfig, BaselineBenchmark, PerformanceMonitor, LatencyMeasurer
+  └─ Clear comments for customization points
+  
+✓ example_benchmark.py (400+ lines)
+  └─ 5 practical usage examples
+  └─ Run directly: python example_benchmark.py
+  
+✓ config_templates.py (300+ lines)
+  └─ 10 pre-built configuration templates
+  └─ Ready-to-use for common scenarios
+  
+✓ BENCHMARKING_GUIDE.md (500+ lines)
+  └─ Comprehensive usage documentation
+  └─ Customization guide with step-by-step instructions
+  └─ Troubleshooting section
+  └─ Integration patterns
+  
+✓ BENCHMARKING_README.txt (400+ lines)
+  └─ Project overview and reference guide
+  └─ Output format documentation
+  └─ Metrics explanation
+  
+✓ QUICK_REFERENCE.txt (400+ lines)
+  └─ Quick lookup card - print this!
+  └─ Copy-paste code snippets
+  └─ Common customizations
+  
+✓ requirements_benchmark.txt
+  └─ Additional dependencies for benchmarking
+  
+✓ INSTALLATION_SUMMARY.txt (this file)
+  └─ What was created and how to get started
+
+
+═════════════════════════════════════════════════════════════════════════════
+ QUICK START (5 MINUTES)
+═════════════════════════════════════════════════════════════════════════════
+
+Step 1: Install Dependencies
+────────────────────────────
+$ pip install -r requirements_benchmark.txt
+
+Step 2: Run First Benchmark
+──────────────────────────
+$ python example_benchmark.py
+
+Step 3: Check Results
+────────────────────
+Results saved to: ./benchmark_results/
+Look for: benchmark_MODELNAME_TIMESTAMP.{csv,json}
+
+Step 4: Customize for Your Setup
+────────────────────────────────
+Edit these functions in benchmark_baseline.py:
+  - load_dataset() ............ line ~130 (Insert your data loading)
+  - load_model() .............. line ~175 (Insert your model loading)
+  - run_inference_batch() ..... line ~290 (Adjust for your model output)
+  - calculate_anomaly_scores() line ~330 (Adjust score calculation)
+
+
+═════════════════════════════════════════════════════════════════════════════
+ WHAT THE SUITE DOES
+═════════════════════════════════════════════════════════════════════════════
+
+The benchmarking suite automatically:
+
+✓ Loads your standardized dataset
+✓ Initializes your baseline model
+✓ Runs inference through batched data
+✓ Calculates Performance Metrics:
+    • Precision (false alarm rate)
+    • Recall (detection rate)
+    • F1-Score (balanced metric)
+    • Accuracy (overall correctness)
+    • AUC-ROC (threshold-independent metric)
+✓ Measures Computational Overhead:
+    • Inference latency (milliseconds per batch)
+    • Mean/median/std/min/max latency
+✓ Records Memory Usage:
+    • RAM before/after/delta
+    • VRAM (GPU) before/after/delta
+✓ Generates Performance Reports:
+    • CSV format (easy to import)
+    • JSON format (structured data)
+✓ Prints comprehensive summary
+✓ Saves to timestamped files for tracking
+
+
+═════════════════════════════════════════════════════════════════════════════
+ OUTPUT EXAMPLE
+═════════════════════════════════════════════════════════════════════════════
+
+PERFORMANCE METRICS:
+  Precision:    0.9234
+  Recall:       0.8765
+  F1-Score:     0.8990
+  Accuracy:     0.9543
+
+COMPUTATIONAL OVERHEAD:
+  Total Inference Time: 5.6789s
+  Mean Latency:         3.4567 ms/batch
+  Median Latency:       3.4123 ms/batch
+
+MEMORY USAGE:
+  RAM Delta:  +1023.45 MB
+  VRAM Delta: +1800.56 MB
+
+Results saved to:
+  - benchmark_results/benchmark_MTAD_GAT_20240115_103045.csv
+  - benchmark_results/benchmark_MTAD_GAT_20240115_103045.json
+
+
+═════════════════════════════════════════════════════════════════════════════
+ CUSTOMIZATION REQUIRED (DO THIS FIRST!)
+═════════════════════════════════════════════════════════════════════════════
+
+The following functions MUST be customized for your specific project:
+
+1. load_dataset() [benchmark_baseline.py, line ~130]
+   ├─ What it does: Loads test data and labels
+   ├─ Expected output: (X_test, y_test) tensors
+   ├─ Your action: Replace synthetic data with actual loading
+   └─ Example: Import Dataset_SMD and return batched data
+
+2. load_model() [benchmark_baseline.py, line ~175]
+   ├─ What it does: Instantiates and loads your model
+   ├─ Expected output: PyTorch model in eval mode
+   ├─ Your action: Instantiate your specific model architecture
+   └─ Example: Add model initialization for your models
+
+3. run_inference_batch() [benchmark_baseline.py, line ~290]
+   ├─ What it does: Runs inference on batches
+   ├─ Expected output: Model predictions/anomaly scores
+   ├─ Your action: Adjust output extraction for your model
+   └─ Example: Handle tuple outputs, reshape as needed
+
+4. calculate_anomaly_scores() [benchmark_baseline.py, line ~330]
+   ├─ What it does: Converts model output to anomaly scores
+   ├─ Expected output: Scores in [0, 1] range
+   ├─ Your action: Implement score calculation for your model
+   └─ Example: Reconstruction error, direct output, custom logic
+
+All functions have detailed comments with placeholders and examples!
+
+
+═════════════════════════════════════════════════════════════════════════════
+ CONFIGURATION QUICK REFERENCE
+═════════════════════════════════════════════════════════════════════════════
+
+BenchmarkConfig Settings:
+
+  DATASET_NAME = "SMD"              # Which dataset
+  MODEL_NAME = "MTAD_GAT"           # Which model
+  DEVICE = "cuda"                   # "cuda" or "cpu"
+  BATCH_SIZE = 32                   # Batch size
+  NUM_ITERATIONS = 10               # Latency measurements
+  WARMUP_ITERATIONS = 2             # Warmup runs
+  ANOMALY_THRESHOLD = 0.5           # Classification threshold
+  OUTPUT_DIR = "./benchmark_results/"  # Results directory
+
+Available Datasets:
+  SMD, MSL, SMAP, PSM, SWaT, WADI, MBA, UCR, NAB, MSDS
+
+Available Models:
+  MTAD_GAT, DLinear, Autoformer, DeepAR, GTA, Informer,
+  LSTNet, MA, GDN, RTNet
+
+
+═════════════════════════════════════════════════════════════════════════════
+ BASIC USAGE PATTERNS
+═════════════════════════════════════════════════════════════════════════════
+
+Pattern 1: Default Configuration
+─────────────────────────────────
+from benchmark_baseline import BenchmarkConfig, BaselineBenchmark
+
+config = BenchmarkConfig()
+benchmark = BaselineBenchmark(config)
+results = benchmark.run_benchmark()
+benchmark.save_results()
+
+
+Pattern 2: Custom Configuration
+───────────────────────────────
+from benchmark_baseline import BenchmarkConfig, BaselineBenchmark
+
+config = BenchmarkConfig()
+config.MODEL_NAME = "DLinear"
+config.BATCH_SIZE = 64
+config.NUM_ITERATIONS = 20
+
+benchmark = BaselineBenchmark(config)
+results = benchmark.run_benchmark()
+benchmark.save_results()
+
+
+Pattern 3: Using Templates
+──────────────────────────
+from benchmark_baseline import BaselineBenchmark
+from config_templates import ThoroughBenchmarkConfig
+
+benchmark = BaselineBenchmark(ThoroughBenchmarkConfig())
+results = benchmark.run_benchmark()
+benchmark.save_results()
+
+
+Pattern 4: Extract Specific Metrics
+───────────────────────────────────
+results = benchmark.run_benchmark()
+
+f1 = results['performance_metrics']['f1_score']
+latency = results['inference']['latency_per_batch_ms']['mean_latency_ms']
+memory = results['memory']['ram_delta_mb']
+
+print(f"F1: {f1:.4f}, Latency: {latency:.2f}ms, RAM: {memory:.2f}MB")
+
+
+═════════════════════════════════════════════════════════════════════════════
+ COMMON MODIFICATIONS
+═════════════════════════════════════════════════════════════════════════════
+
+Change Model:
+  config.MODEL_NAME = "Autoformer"
+
+Change Dataset:
+  config.DATASET_NAME = "MSL"
+
+Use CPU Instead of GPU:
+  config.DEVICE = "cpu"
+
+Increase Batch Size:
+  config.BATCH_SIZE = 128
+
+More Stable Measurements:
+  config.NUM_ITERATIONS = 50
+  config.WARMUP_ITERATIONS = 5
+
+Adjust Anomaly Threshold:
+  config.ANOMALY_THRESHOLD = 0.3  # More sensitive
+  config.ANOMALY_THRESHOLD = 0.7  # More conservative
+
+Use Different Output Directory:
+  config.OUTPUT_DIR = "./my_benchmark_results/"
+
+
+═════════════════════════════════════════════════════════════════════════════
+ COMPARING MULTIPLE MODELS
+═════════════════════════════════════════════════════════════════════════════
+
+from benchmark_baseline import BenchmarkConfig, BaselineBenchmark
+
+models = ["MTAD_GAT", "DLinear", "Autoformer"]
+results = {}
+
+for model_name in models:
+    config = BenchmarkConfig()
+    config.MODEL_NAME = model_name
+    benchmark = BaselineBenchmark(config)
+    results[model_name] = benchmark.run_benchmark()
+    benchmark.save_results()
+
+# Compare results
+print(f"{'Model':<20} {'F1':<10} {'Latency':<12} {'RAM':<10}")
+for model, res in results.items():
+    f1 = res['performance_metrics']['f1_score']
+    lat = res['inference']['latency_per_batch_ms']['mean_latency_ms']
+    ram = res['memory']['ram_delta_mb']
+    print(f"{model:<20} {f1:<10.4f} {lat:<12.4f} {ram:<10.2f}")
+
+
+═════════════════════════════════════════════════════════════════════════════
+ FILE ORGANIZATION
+═════════════════════════════════════════════════════════════════════════════
+
+AFMF-main/
+├── benchmark_baseline.py ........... Main script (edit this)
+├── example_benchmark.py ........... Examples (reference)
+├── config_templates.py ............ Pre-built configs
+├── requirements_benchmark.txt ..... Dependencies
+├── BENCHMARKING_GUIDE.md .......... Detailed guide
+├── BENCHMARKING_README.txt ........ Reference documentation
+├── QUICK_REFERENCE.txt ........... Quick lookup (print this!)
+├── INSTALLATION_SUMMARY.txt ....... This file
+├── benchmark_results/ ............ Results (auto-created)
+│   ├── benchmark_MODEL_*.csv
+│   └── benchmark_MODEL_*.json
+├── data/ ......................... Your data
+├── models/ ....................... Your models
+├── exp/ .......................... Your experiments
+└── utils/ ........................ Utilities
+
+
+═════════════════════════════════════════════════════════════════════════════
+ NEXT STEPS (IN ORDER)
+═════════════════════════════════════════════════════════════════════════════
+
+1. [ ] Read QUICK_REFERENCE.txt (5 min)
+   └─ Familiarize with the benchmarking system
+
+2. [ ] Install dependencies (2 min)
+   └─ $ pip install -r requirements_benchmark.txt
+
+3. [ ] Customize load_dataset() function (10 min)
+   └─ Edit benchmark_baseline.py, line ~130
+
+4. [ ] Customize load_model() function (10 min)
+   └─ Edit benchmark_baseline.py, line ~175
+
+5. [ ] Customize anomaly score calculation (5 min)
+   └─ Edit calculate_anomaly_scores(), line ~330
+
+6. [ ] Run test benchmark (5 min)
+   └─ $ python example_benchmark.py
+
+7. [ ] Review results in ./benchmark_results/ (5 min)
+   └─ Check CSV and JSON output files
+
+8. [ ] Compare multiple models (30 min)
+   └─ Run all models and create comparison table
+
+9. [ ] Document baseline metrics (10 min)
+   └─ Save results for future reference
+
+10. [ ] Use for optimization (ongoing)
+    └─ Compare future improvements against baseline
+
+
+═════════════════════════════════════════════════════════════════════════════
+ TROUBLESHOOTING
+═════════════════════════════════════════════════════════════════════════════
+
+Q: "ModuleNotFoundError: No module named 'models'"
+A: Run from project root directory where AFMF-main is located
+
+Q: "CUDA out of memory"
+A: Reduce BATCH_SIZE or set config.DEVICE = "cpu"
+
+Q: "Dataset not found"
+A: Check config.DATA_PATH and ensure dataset files exist
+
+Q: "All metrics are zero"
+A: Check ANOMALY_THRESHOLD and verify y_test contains both 0 and 1
+
+Q: "Latency measurements vary a lot"
+A: Increase NUM_ITERATIONS and WARMUP_ITERATIONS
+
+Q: "Model loading fails"
+A: Verify model import statement and checkpoint compatibility
+
+Q: "Results directory not created"
+A: Ensure OUTPUT_DIR path is writable
+
+
+═════════════════════════════════════════════════════════════════════════════
+ KEY METRICS EXPLAINED
+═════════════════════════════════════════════════════════════════════════════
+
+PERFORMANCE METRICS (0-1, higher is better):
+
+  Precision: Of detected anomalies, how many were correct?
+    └─ Formula: TP / (TP + FP)
+    └─ Use when: False positives are costly
+
+  Recall: Of actual anomalies, how many did we detect?
+    └─ Formula: TP / (TP + FN)
+    └─ Use when: Missing anomalies is costly
+
+  F1-Score: Harmonic mean of Precision and Recall
+    └─ Formula: 2 * (Precision × Recall) / (Precision + Recall)
+    └─ Use when: You want a single balanced metric
+
+  Accuracy: What % of predictions were correct?
+    └─ Formula: (TP + TN) / Total
+    └─ Warning: Can be misleading with imbalanced data
+
+  AUC-ROC: Performance across all threshold values
+    └─ Range: 0-1 (0.5 = random, 1.0 = perfect)
+
+COMPUTATIONAL METRICS:
+
+  Latency: Time to process one batch (milliseconds)
+    └─ Mean: Average
+    └─ Median: Robust middle value
+    └─ Std: Stability measure
+
+  Memory: RAM/VRAM increase (megabytes)
+    └─ Delta: Difference before/after
+    └─ Lower is better
+
+
+═════════════════════════════════════════════════════════════════════════════
+ GOOD BASELINE VALUES (REFERENCE)
+═════════════════════════════════════════════════════════════════════════════
+
+Strong Baseline:
+  ├─ F1-Score ≥ 0.85
+  ├─ Precision ≥ 0.90
+  ├─ Recall ≥ 0.80
+  ├─ Latency < 10ms/batch
+  └─ Memory < 2000 MB GPU
+
+Acceptable Baseline:
+  ├─ F1-Score 0.75-0.85
+  ├─ Precision 0.80-0.90
+  ├─ Recall 0.70-0.80
+  ├─ Latency 10-50ms/batch
+  └─ Memory 2000-4000 MB GPU
+
+Needs Improvement:
+  ├─ F1-Score < 0.75
+  ├─ Precision < 0.80
+  ├─ Recall < 0.70
+  ├─ Latency > 50ms/batch
+  └─ Memory > 4000 MB GPU
+
+
+═════════════════════════════════════════════════════════════════════════════
+ DOCUMENTATION ROADMAP
+═════════════════════════════════════════════════════════════════════════════
+
+START HERE → QUICK_REFERENCE.txt (quick lookup, copy-paste code)
+         ↓
+         → BENCHMARKING_README.txt (overview, output structure)
+         ↓
+         → BENCHMARKING_GUIDE.md (detailed guide, customization)
+         ↓
+         → benchmark_baseline.py (source code, comments)
+         ↓
+         → config_templates.py (pre-built configurations)
+         ↓
+         → example_benchmark.py (practical examples)
+
+
+═════════════════════════════════════════════════════════════════════════════
+ SUPPORT & RESOURCES
+═════════════════════════════════════════════════════════════════════════════
+
+All scripts have extensive inline comments explaining:
+  • What each function does
+  • How to customize it for your needs
+  • Where to insert your specific code
+  • Examples of common patterns
+
+Documentation files:
+  • BENCHMARKING_README.txt - Overview and reference
+  • BENCHMARKING_GUIDE.md - Detailed customization guide
+  • QUICK_REFERENCE.txt - Quick lookup and copy-paste
+
+Example files:
+  • example_benchmark.py - 5 practical examples
+  • config_templates.py - 10 pre-built configurations
+
+
+═════════════════════════════════════════════════════════════════════════════
+ FINAL CHECKLIST BEFORE RUNNING
+═════════════════════════════════════════════════════════════════════════════
+
+[ ] Dependencies installed: pip install -r requirements_benchmark.txt
+[ ] benchmark_baseline.py customized (load_dataset, load_model, etc.)
+[ ] BenchmarkConfig updated (MODEL_NAME, DATASET_NAME, etc.)
+[ ] DATA_PATH points to correct location
+[ ] OUTPUT_DIR is writable
+[ ] DEVICE set correctly (cuda or cpu)
+[ ] Test with small dataset first
+[ ] Review example output
+[ ] Save results for comparison
+
+
+═════════════════════════════════════════════════════════════════════════════
+
+✓ INSTALLATION COMPLETE!
+
+You now have a production-ready benchmarking suite for Phase 2.
+
+Next: Read QUICK_REFERENCE.txt and customize the functions!
+
+═════════════════════════════════════════════════════════════════════════════

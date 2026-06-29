@@ -1,0 +1,15 @@
+# Benchmarking Requirements
+# Add these to your main requirements.txt
+
+# Performance Monitoring
+psutil>=5.9.0
+
+# ML & Metrics
+scikit-learn>=1.0.0
+
+# Data Processing
+numpy>=1.21.0
+pandas>=1.3.0
+
+# Deep Learning
+torch>=1.10.0  # Adjust based on your CUDA version
